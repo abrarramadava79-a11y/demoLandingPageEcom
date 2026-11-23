@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ERACOM — Luxury Editorial E-Commerce &amp; Smart Power Ecosystem</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Space Grotesk, Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- QRCode.js for Dynamic QRIS Sandbox -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Space Grotesk', 'Plus Jakarta Sans', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            limeVolt: '#D9FF00',
+            limeSoft: '#E9FF66',
+            obsidian: '#111111',
+            charcoal: '#191919',
+            canvas: '#FAFAFA',
+            eracomBlue: '#1D4ED8',
+            eracomOrange: '#F97316',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-page: #FAFAFA;
+      --text-main: #111111;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .spin-slow {
+      animation: spinSlow 18s linear infinite;
+    }
+
+    @keyframes floatGentle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+
+    .float-gentle {
+      animation: floatGentle 4.5s ease-in-out infinite;
+    }
+
+    .fade-panel {
+      animation: fadePanel 0.25s ease-out;
+    }
+
+    @keyframes fadePanel {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #eracom-invoice-print, #eracom-invoice-print * { visibility: visible; }
+      #eracom-invoice-print { position: absolute; left: 0; top: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-limeVolt selection:text-obsidian">
+
+  <!-- ==================== 1. MINIMALIST TOP HEADER ==================== -->
+  <header id="site-header" class="sticky top-0 z-40 bg-canvas/90 backdrop-blur-md border-b border-neutral-200/80 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- Left Nav Links -->
+      <nav aria-label="Primary Navigation" class="hidden md:flex items-center gap-7 text-[11px] font-bold tracking-[0.14em] uppercase text-neutral-800">
+        <a href="#whats-new" class="hover:text-eracomBlue transition-colors">WHATS NEW</a>
+        <a href="#collections" class="hover:text-eracomBlue transition-colors">COLLECTIONS</a>
+        <a href="#support" class="hover:text-eracomBlue transition-colors">SUPPORT</a>
+      </nav>
+
+      <!-- Mobile Menu Trigger -->
+      <button id="mobile-menu-btn" type="button" onclick="toggleMobileMenu()" aria-label="Toggle Menu" class="md:hidden p-2 rounded-full border border-neutral-300 text-obsidian hover:bg-neutral-100 transition">
+        <i data-lucide="menu" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Center Brand Identity: ERACOM + Power Core Button -->
+      <a href="#" class="flex items-center gap-2.5 group">
+        <span class="w-8 h-8 rounded-full bg-obsidian text-limeVolt flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+          <i data-lucide="power" class="w-4 h-4 stroke-[2.5]"></i>
+        </span>
+        <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-obsidian">
+          ERA<span class="text-eracomBlue">COM</span>
+          <span class="inline-block w-1.5 h-1.5 rounded-full bg-eracomOrange ml-0.5 align-middle"></span>
+        </span>
+      </a>
+
+      <!-- Right Utility Controls: Power/System Info, Bag Badge & Language Switcher -->
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <button id="system-status-btn" type="button" onclick="openSystemInfoModal()" title="ERACOM Core Power &amp; System Status" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-100 hover:bg-limeVolt text-obsidian text-[11px] font-bold tracking-wider uppercase border border-neutral-200 transition-colors">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span id="sys-status-label">CORE 98%</span>
+        </button>
+
+        <button type="button" onclick="toggleCartDrawer(true)" aria-label="Shopping Bag" class="relative p-2.5 rounded-full bg-white hover:bg-neutral-100 border border-neutral-300 text-obsidian transition-colors">
+          <i data-lucide="shopping-bag" class="w-4 h-4 stroke-[2.2]"></i>
+          <span id="cart-badge" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-obsidian text-limeVolt text-[10px] font-extrabold flex items-center justify-center">
+            0
+          </span>
+        </button>
+
+        <!-- Language Selector (ID / ENG) -->
+        <div class="inline-flex items-center rounded-full bg-obsidian p-0.5 text-[11px] font-bold text-white">
+          <button id="lang-btn-id" type="button" onclick="setLanguage('id')" class="px-2.5 py-1 rounded-full bg-limeVolt text-obsidian transition-colors">ID</button>
+          <button id="lang-btn-en" type="button" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full text-neutral-300 hover:text-white transition-colors">ENG</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu-panel" class="hidden md:hidden bg-white border-b border-neutral-200 px-4 py-3 space-y-2 text-xs font-bold tracking-widest uppercase">
+      <a href="#whats-new" onclick="toggleMobileMenu()" class="block py-2 text-obsidian hover:text-eracomBlue">WHATS NEW</a>
+      <a href="#collections" onclick="toggleMobileMenu()" class="block py-2 text-obsidian hover:text-eracomBlue">COLLECTIONS</a>
+      <a href="#support" onclick="toggleMobileMenu()" class="block py-2 text-obsidian hover:text-eracomBlue">SUPPORT</a>
+      <button type="button" onclick="openSystemInfoModal(); toggleMobileMenu();" class="w-full text-left py-2 text-eracomOrange">SYSTEM POWER INFO</button>
+    </div>
+  </header>
+
+  <!-- ==================== 2. BOLD EDITORIAL HERO ==================== -->
+  <section id="whats-new" class="relative pt-8 pb-14 lg:pt-12 lg:pb-20 border-b border-neutral-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+
+        <!-- Left Editorial Typography + Rating + CTA -->
+        <div class="lg:col-span-6 relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-neutral-200 shadow-2xs mb-4">
+            <span class="w-2 h-2 rounded-full bg-eracomBlue"></span>
+            <span class="text-[11px] font-bold tracking-[0.14em] uppercase text-neutral-700" data-i18n="heroBadge">
+              ERACOM FLAGSHIP • EDITION 2026
+            </span>
+          </div>
+
+          <h1 id="hero-headline-main" class="font-display font-extrabold uppercase tracking-[-0.04em] leading-[0.92] text-[3.1rem] sm:text-[4.5rem] xl:text-[5.35rem] text-obsidian">
+            EXTEND YOUR
+          </h1>
+
+          <div class="mt-2 inline-block bg-limeVolt px-3.5 py-1 sm:px-5 sm:py-1.5 rounded-xl shadow-2xs">
+            <span id="hero-headline-sub" class="font-display font-extrabold uppercase tracking-[-0.03em] text-[2.15rem] sm:text-[3.25rem] xl:text-[3.85rem] leading-none text-obsidian block">
+              PRODUCTIVITY
+            </span>
+          </div>
+
+          <p id="hero-desc" class="mt-5 text-sm sm:text-base text-neutral-600 max-w-lg leading-relaxed">
+            Modul daya presisi, casing pelindung pintar, dan aksesoris ergonomis rancangan <strong>ERACOM</strong> yang menyatu mulus dengan ritme kerja dan gaya hidup modern Anda.
+          </p>
+
+          <div class="mt-7 flex flex-wrap items-center gap-5">
+            <a href="#collections" class="inline-flex items-center gap-3 pl-5 pr-2 py-2 rounded-full bg-obsidian hover:bg-neutral-800 text-white font-display font-bold text-sm transition-all shadow-md group">
+              <span data-i18n="heroCta">Gets Started</span>
+              <span class="w-8 h-8 rounded-full bg-limeVolt text-obsidian flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                <i data-lucide="arrow-right" class="w-4 h-4 stroke-[2.5]"></i>
+              </span>
+            </a>
+
+            <div class="flex items-center gap-3">
+              <div class="flex -space-x-2.5">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Buyer 1" onerror="this.src='https://placehold.co/60x60/111111/D9FF00?text=A'" class="w-9 h-9 rounded-full object-cover ring-2 ring-white" />
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Buyer 2" onerror="this.src='https://placehold.co/60x60/1D4ED8/FFFFFF?text=B'" class="w-9 h-9 rounded-full object-cover ring-2 ring-white" />
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Buyer 3" onerror="this.src='https://placehold.co/60x60/F97316/FFFFFF?text=C'" class="w-9 h-9 rounded-full object-cover ring-2 ring-white" />
+              </div>
+              <div>
+                <div class="flex items-baseline gap-1">
+                  <span class="font-display font-extrabold text-xl text-obsidian">4.9</span>
+                  <span class="text-xs font-bold text-neutral-500">/5</span>
+                  <span class="text-amber-500 text-xs ml-0.5">★★★★★</span>
+                </div>
+                <p class="text-[11px] text-neutral-500 font-medium" data-i18n="heroReviews">2,480+ Pengguna Terverifikasi</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-neutral-200 flex flex-wrap items-center gap-6 text-xs font-semibold text-neutral-700">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-limeVolt/60 text-obsidian flex items-center justify-center">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+              </span>
+              <span>Fast Magnetic Charge</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-blue-100 text-eracomBlue flex items-center justify-center">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+              </span>
+              <span>2-Yr ERACOM Warranty</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-orange-100 text-eracomOrange flex items-center justify-center">
+                <i data-lucide="clock" class="w-4 h-4"></i>
+              </span>
+              <span>Same-Day Dispatch</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Interactive Product Showcase Stage -->
+        <div class="lg:col-span-6 relative">
+          <div class="hidden sm:flex flex-col items-center gap-2 absolute -left-4 top-1/2 -translate-y-1/2 z-20">
+            <span class="text-[10px] font-extrabold text-neutral-400 rotate-[-90deg] mb-3 tracking-widest">CAP</span>
+            <div class="w-2 h-36 rounded-full bg-neutral-200 overflow-hidden flex flex-col justify-end p-0.5">
+              <div id="hero-cap-bar" class="w-full h-[85%] rounded-full bg-gradient-to-t from-eracomBlue via-limeVolt to-limeSoft transition-all duration-300"></div>
+            </div>
+            <span id="hero-cap-text" class="text-[11px] font-extrabold text-obsidian mt-1">675mAh</span>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-neutral-200/90 p-5 sm:p-7 shadow-xl relative overflow-hidden">
+            <div class="pointer-events-none select-none font-display font-extrabold text-[4.5rem] sm:text-[6.5rem] leading-none text-neutral-100 absolute top-6 right-4 z-0">
+              ERA
+            </div>
+
+            <div class="relative z-10 flex items-center justify-between gap-2 mb-4">
+              <div>
+                <span class="px-2.5 py-0.5 rounded-full bg-obsidian text-limeVolt text-[10px] font-bold uppercase tracking-wider">
+                  Interactive Stage
+                </span>
+                <h2 id="showcase-title" class="font-display font-bold text-lg sm:text-xl text-obsidian mt-1">
+                  ERACOM Pulse Case 675 mAh
+                </h2>
+              </div>
+              <span id="showcase-price" class="font-display font-extrabold text-base sm:text-lg text-obsidian bg-neutral-100 px-3 py-1 rounded-full">
+                Rp 689.000
+              </span>
+            </div>
+
+            <div onclick="openQuickProductModal(currentShowcaseProduct.id)" class="cursor-pointer rounded-2xl bg-neutral-100 h-64 sm:h-76 flex items-center justify-center overflow-hidden relative group float-gentle">
+              <img id="showcase-img" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=80" alt="ERACOM Smart Power Case" onerror="this.src='https://placehold.co/800x500/111111/D9FF00?text=ERACOM+PULSE'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div class="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-obsidian/85 text-white text-[11px] font-semibold backdrop-blur-xs flex items-center gap-1.5">
+                <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-limeVolt"></i>
+                <span>Detail &amp; Varian</span>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+              <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0" id="showcase-switcher-pills">
+                <!-- Populated via JS -->
+              </div>
+
+              <button type="button" onclick="addProductToCart(currentShowcaseProduct.id, 1)" class="px-4 py-2.5 rounded-full bg-limeVolt hover:bg-limeSoft text-obsidian font-display font-bold text-xs tracking-wide uppercase transition-colors flex items-center justify-center gap-1.5 shrink-0 shadow-xs">
+                <i data-lucide="plus" class="w-4 h-4 stroke-[2.5]"></i>
+                <span data-i18n="addToBag">Add to Bag</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. MODULAR SHOWCASE & FEATURE SPLIT ==================== -->
+  <section class="py-14 lg:py-20 bg-white border-b border-neutral-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+
+      <div class="relative bg-obsidian text-white rounded-3xl p-6 sm:p-10 lg:p-12 overflow-hidden shadow-xl">
+        <div class="hidden sm:flex items-center justify-center w-24 h-24 rounded-full bg-limeVolt text-obsidian absolute -top-4 right-8 shadow-lg z-20">
+          <svg viewBox="0 0 100 100" class="w-20 h-20 spin-slow">
+            <defs>
+              <path id="circleStampPath" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" />
+            </defs>
+            <text fill="#111111" font-size="9.5" font-weight="800" letter-spacing="2.2">
+              <textPath href="#circleStampPath">ERACOM LABS • POWERED •</textPath>
+            </text>
+          </svg>
+          <i data-lucide="zap" class="w-5 h-5 fill-obsidian text-obsidian absolute"></i>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-6 space-y-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-neutral-800 text-limeVolt text-[11px] font-bold uppercase tracking-widest">
+              675 mAh Modular Core
+            </span>
+            <h2 class="font-display font-extrabold uppercase tracking-tight text-2xl sm:text-4xl leading-tight">
+              IT IS A <span class="text-limeVolt">POWERFUL</span> DEVICE FOR YOUR LIFE.
+            </h2>
+            <p class="text-sm text-neutral-300 leading-relaxed max-w-xl">
+              Dirancang untuk menemani jadwal padat tanpa kabel berantakan. Sel baterai padat energi ERACOM menjaga perangkat tetap aktif sepanjang hari dengan proteksi suhu cerdas dan bodi matte tahan gores.
+            </p>
+            <div class="grid grid-cols-3 gap-3 pt-2">
+              <div class="bg-charcoal border border-neutral-800 rounded-2xl p-3">
+                <p class="font-display font-extrabold text-lg text-limeVolt">675 mAh</p>
+                <p class="text-[11px] text-neutral-400">High-Density Cell</p>
+              </div>
+              <div class="bg-charcoal border border-neutral-800 rounded-2xl p-3">
+                <p class="font-display font-extrabold text-lg text-white">18g</p>
+                <p class="text-[11px] text-neutral-400">Ultra-Light Shell</p>
+              </div>
+              <div class="bg-charcoal border border-neutral-800 rounded-2xl p-3">
+                <p class="font-display font-extrabold text-lg text-eracomOrange">20W</p>
+                <p class="text-[11px] text-neutral-400">Magnetic PD</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6">
+            <div class="rounded-2xl overflow-hidden border border-neutral-800 bg-charcoal h-64 sm:h-80 relative">
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80" alt="ERACOM Modular Hardware" onerror="this.src='https://placehold.co/800x500/191919/D9FF00?text=ERACOM+MODULAR'" class="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-500" />
+              <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between bg-obsidian/85 backdrop-blur-xs px-4 py-2.5 rounded-xl border border-neutral-800 text-xs">
+                <span class="font-semibold text-neutral-200">Seamless Pass-Through Charging</span>
+                <span class="text-limeVolt font-bold">ACTIVE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Tabs -->
+      <div>
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+          <div>
+            <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-eracomBlue">Modular Ecosystem</span>
+            <h2 class="font-display font-extrabold uppercase text-2xl sm:text-3xl text-obsidian tracking-tight mt-1">
+              HOW TO PAIR &amp; CUSTOMIZE
+            </h2>
+          </div>
+
+          <div class="inline-flex rounded-full bg-neutral-100 p-1 border border-neutral-200 self-start">
+            <button id="tab-btn-editions" type="button" onclick="switchFeatureTab('editions')" class="px-4 py-2 rounded-full text-xs font-bold bg-obsidian text-limeVolt transition-all">
+              01. Straps &amp; Editions
+            </button>
+            <button id="tab-btn-care" type="button" onclick="switchFeatureTab('care')" class="px-4 py-2 rounded-full text-xs font-bold text-neutral-600 hover:text-obsidian transition-all">
+              02. How It Works &amp; Care
+            </button>
+          </div>
+        </div>
+
+        <div id="tab-panel-editions" class="fade-panel grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-canvas rounded-2xl border border-neutral-200 p-5 hover:border-obsidian transition">
+            <div class="h-44 rounded-xl overflow-hidden bg-neutral-200 mb-4">
+              <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=700&q=80" alt="Alpine Knit Strap" onerror="this.src='https://placehold.co/600x400/E5E5E5/111111?text=Alpine+Strap'" class="w-full h-full object-cover" />
+            </div>
+            <span class="px-2 py-0.5 rounded bg-limeVolt text-obsidian text-[10px] font-extrabold uppercase">Edition 01</span>
+            <h3 class="font-display font-bold text-base text-obsidian mt-2">Woven Alpine Strap</h3>
+            <p class="text-xs text-neutral-600 mt-1 leading-relaxed">Anyaman nilon bertekstur dua lapis dengan pengait titanium ringan untuk kenyamanan sepanjang hari.</p>
+          </div>
+
+          <div class="bg-canvas rounded-2xl border border-neutral-200 p-5 hover:border-obsidian transition">
+            <div class="h-44 rounded-xl overflow-hidden bg-neutral-200 mb-4">
+              <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=700&q=80" alt="Volt Edition Shell" onerror="this.src='https://placehold.co/600x400/E5E5E5/111111?text=Volt+Shell'" class="w-full h-full object-cover" />
+            </div>
+            <span class="px-2 py-0.5 rounded bg-eracomBlue text-white text-[10px] font-extrabold uppercase">Edition 02</span>
+            <h3 class="font-display font-bold text-base text-obsidian mt-2">Volt Cobalt Armor</h3>
+            <p class="text-xs text-neutral-600 mt-1 leading-relaxed">Kombinasi finishing satin biru kobalt dan sudut peredam benturan untuk aktivitas outdoor dinamis.</p>
+          </div>
+
+          <div class="bg-canvas rounded-2xl border border-neutral-200 p-5 hover:border-obsidian transition">
+            <div class="h-44 rounded-xl overflow-hidden bg-neutral-200 mb-4">
+              <img src="https://images.unsplash.com/photo-1617043786394-f977fa12eddf?auto=format&fit=crop&w=700&q=80" alt="Studio Matte Edition" onerror="this.src='https://placehold.co/600x400/E5E5E5/111111?text=Studio+Matte'" class="w-full h-full object-cover" />
+            </div>
+            <span class="px-2 py-0.5 rounded bg-eracomOrange text-white text-[10px] font-extrabold uppercase">Edition 03</span>
+            <h3 class="font-display font-bold text-base text-obsidian mt-2">Studio Ember Edition</h3>
+            <p class="text-xs text-neutral-600 mt-1 leading-relaxed">Sentuhan aksen oranye hangat pada tombol taktil presisi tinggi dan lapisan anti-sidik jari.</p>
+          </div>
+        </div>
+
+        <div id="tab-panel-care" class="hidden fade-panel grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-canvas rounded-2xl border border-neutral-200 p-6">
+            <span class="font-display font-extrabold text-2xl text-eracomBlue">01</span>
+            <h3 class="font-display font-bold text-base text-obsidian mt-2">Snap &amp; Lock Precision</h3>
+            <p class="text-xs text-neutral-600 mt-1.5 leading-relaxed">Selipkan perangkat ke dalam modul ERACOM hingga terdengar klik presisi. Konektor sejajar otomatis tanpa paksaan.</p>
+          </div>
+          <div class="bg-canvas rounded-2xl border border-neutral-200 p-6">
+            <span class="font-display font-extrabold text-2xl text-eracomOrange">02</span>
+            <h3 class="font-display font-bold text-base text-obsidian mt-2">Smart Thermal Trickle</h3>
+            <p class="text-xs text-neutral-600 mt-1.5 leading-relaxed">Sistem manajemen daya otomatis menurunkan arus saat kapasitas mencapai 80% demi menjaga umur sel baterai.</p>
+          </div>
+          <div class="bg-canvas rounded-2xl border border-neutral-200 p-6">
+            <span class="font-display font-extrabold text-2xl text-obsidian">03</span>
+            <h3 class="font-display font-bold text-base text-obsidian mt-2">Effortless Care</h3>
+            <p class="text-xs text-neutral-600 mt-1.5 leading-relaxed">Bersihkan bagian luar menggunakan kain mikrofiber kering. Hindari merendam port pengisian dalam cairan.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 4. FILTERABLE LUXURY PRODUCT CATALOG ==================== -->
+  <section id="collections" class="py-14 lg:py-20 bg-canvas">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 mb-8">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-[0.14em] text-eracomOrange">ERACOM Storefront</span>
+          <h2 class="font-display font-extrabold uppercase text-2xl sm:text-4xl text-obsidian tracking-tight mt-1">
+            FEATURED COLLECTIONS
+          </h2>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div id="catalog-category-pills" class="flex flex-wrap items-center gap-1.5">
+            <!-- Populated via JS -->
+          </div>
+          <button id="currency-toggle-btn" type="button" onclick="toggleCurrency()" class="ml-1 px-3.5 py-2 rounded-full bg-white hover:bg-neutral-100 border border-neutral-300 text-xs font-extrabold text-obsidian transition">
+            IDR (Rp)
+          </button>
+        </div>
+      </div>
+
+      <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SUPPORT & LUXURY FOOTER ==================== -->
+  <footer id="support" class="bg-obsidian text-white pt-14 pb-10 border-t border-neutral-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-neutral-800">
+        <div class="md:col-span-5 space-y-3">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-full bg-limeVolt text-obsidian flex items-center justify-center">
+              <i data-lucide="power" class="w-4 h-4 stroke-[2.5]"></i>
+            </span>
+            <span class="font-display font-extrabold text-xl tracking-tight">ERA<span class="text-blue-400">COM</span></span>
+          </div>
+          <p class="text-xs text-neutral-400 leading-relaxed max-w-sm">
+            Brand gaya hidup &amp; perangkat daya modular berstandar presisi. Dirancang untuk efisiensi harian tanpa kompromi estetika.
+          </p>
+        </div>
+
+        <div class="md:col-span-3 space-y-2 text-xs">
+          <p class="font-display font-bold uppercase tracking-wider text-limeVolt mb-2">Navigation</p>
+          <a href="#whats-new" class="block text-neutral-300 hover:text-white">Whats New</a>
+          <a href="#collections" class="block text-neutral-300 hover:text-white">Collections</a>
+          <button type="button" onclick="toggleCartDrawer(true)" class="block text-neutral-300 hover:text-white text-left">Shopping Bag &amp; Checkout</button>
+        </div>
+
+        <div class="md:col-span-4 space-y-2 text-xs">
+          <p class="font-display font-bold uppercase tracking-wider text-limeVolt mb-2">Concierge &amp; Support</p>
+          <p class="text-neutral-300">concierge@eracom-studio.id</p>
+          <p class="text-neutral-400">Senin – Minggu • 09.00 – 21.00 WIB</p>
+          <button type="button" onclick="openSystemInfoModal()" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-800 hover:bg-neutral-700 text-[11px] font-semibold text-white">
+            <i data-lucide="cpu" class="w-3.5 h-3.5 text-limeVolt"></i>
+            <span>Cek Status Sistem &amp; Garansi</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-neutral-500">
+        <p>© 2026 ERACOM. All rights reserved.</p>
+        <p>QRIS • Virtual Account • E-Wallet • Credit Card (Demo Sandbox)</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== 5A. SHOPPING BAG DRAWER ==================== -->
+  <div id="cart-backdrop" onclick="toggleCartDrawer(false)" class="fixed inset-0 bg-obsidian/60 backdrop-blur-2xs z-50 hidden"></div>
+  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="px-5 py-4 bg-obsidian text-white flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <i data-lucide="shopping-bag" class="w-4 h-4 text-limeVolt"></i>
+        <h2 class="font-display font-bold text-sm uppercase tracking-wider">ERACOM Bag</h2>
+      </div>
+      <button type="button" onclick="toggleCartDrawer(false)" aria-label="Close Bag" class="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-neutral-300">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div id="cart-items-list" class="flex-1 overflow-y-auto p-4 space-y-3 bg-canvas">
+      <!-- Populated via JS -->
+    </div>
+
+    <div class="p-5 bg-white border-t border-neutral-200 space-y-3">
+      <!-- Promo Code Input -->
+      <div>
+        <div class="flex gap-2">
+          <input id="promo-code-input" type="text" placeholder="Kode promo (ERACOM10 / VIP25)" class="flex-1 bg-canvas border border-neutral-300 rounded-full px-3.5 py-2 text-xs font-bold uppercase text-obsidian placeholder-neutral-400 focus:outline-none focus:border-obsidian" />
+          <button type="button" onclick="applyPromoCode()" class="px-4 py-2 rounded-full bg-obsidian hover:bg-neutral-800 text-limeVolt text-xs font-extrabold uppercase transition">
+            Pakai
+          </button>
+        </div>
+        <div class="flex items-center justify-between mt-1">
+          <p id="promo-feedback" class="text-[11px] font-medium text-neutral-500">Promo: ERACOM10 (10%) • VIP25 (25%)</p>
+          <button type="button" id="clear-promo-btn" onclick="clearPromoCode()" class="hidden text-[11px] font-bold text-rose-600 hover:underline">
+            Hapus Kode
+          </button>
+        </div>
+      </div>
+
+      <!-- Shipping Tier Selector -->
+      <div class="bg-canvas border border-neutral-200 rounded-2xl p-3 space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-neutral-500">Opsi Pengiriman</span>
+          <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">Guest Checkout</span>
+        </div>
+        <select id="shipping-tier-select" onchange="setShippingTier(this.value)" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-xs font-bold text-obsidian focus:outline-none focus:border-obsidian">
+          <option value="regular">Reguler — Rp 18.000 / $3 (2–4 Hari)</option>
+          <option value="express">Express — Rp 35.000 / $6 (1–2 Hari)</option>
+          <option value="instant">Instan — Rp 55.000 / $9 (Same-Day)</option>
+        </select>
+      </div>
+
+      <!-- Itemized Breakdown -->
+      <div class="space-y-1.5 text-xs pt-1 border-t border-neutral-100">
+        <div class="flex items-center justify-between text-neutral-600">
+          <span>Subtotal</span>
+          <span id="cart-subtotal-display" class="font-bold text-obsidian">Rp 0</span>
+        </div>
+        <div class="flex items-center justify-between text-neutral-600">
+          <span>Ongkir</span>
+          <span id="cart-shipping-display" class="font-bold text-obsidian">Rp 0</span>
+        </div>
+        <div id="cart-bundle-discount-row" class="hidden items-center justify-between text-emerald-700 font-semibold">
+          <span>Diskon Bundle (≥2 item • 5%)</span>
+          <span id="cart-bundle-discount-display">-Rp 0</span>
+        </div>
+        <div id="cart-promo-discount-row" class="hidden items-center justify-between text-eracomBlue font-semibold">
+          <span id="cart-promo-label">Diskon Promo</span>
+          <span id="cart-promo-discount-display">-Rp 0</span>
+        </div>
+        <div class="flex items-center justify-between text-sm font-extrabold text-obsidian pt-2 border-t border-neutral-200">
+          <span>Total Bayar</span>
+          <span id="cart-total-bayar-display" class="font-display text-base">Rp 0</span>
+        </div>
+      </div>
+
+      <button id="checkout-open-btn" type="button" onclick="openPaymentModal()" disabled class="w-full py-3 rounded-full bg-limeVolt hover:bg-limeSoft disabled:opacity-40 disabled:cursor-not-allowed text-obsidian font-display font-extrabold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span>Checkout &amp; Pay Gateway</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ==================== 5B. PRODUCT DETAIL MODAL ==================== -->
+  <div id="product-detail-modal" class="fixed inset-0 bg-obsidian/70 backdrop-blur-2xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full overflow-hidden shadow-2xl border border-neutral-200">
+      <div id="product-detail-body" class="p-6 space-y-4">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5C. PAYMENT GATEWAY SIMULATION MODAL ==================== -->
+  <div id="payment-modal" class="fixed inset-0 bg-obsidian/75 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-neutral-200 my-auto">
+      <div class="px-6 py-4 bg-obsidian text-white flex items-center justify-between">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-display font-extrabold text-sm tracking-wide">ERACOM PAY</span>
+            <span class="px-2 py-0.5 rounded bg-limeVolt text-obsidian text-[10px] font-extrabold uppercase">Sandbox</span>
+          </div>
+          <p id="pg-order-ref" class="text-[11px] text-neutral-400 font-mono mt-0.5">REF: #ERC-000000</p>
+        </div>
+        <button type="button" onclick="closePaymentModal()" aria-label="Close Payment Modal" class="w-8 h-8 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center text-neutral-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Step 1: Choose Channel -->
+      <div id="pg-view-methods" class="p-6 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-canvas p-4 rounded-2xl border border-neutral-200">
+          <div>
+            <p class="text-[11px] text-neutral-500 font-medium">Total Bayar</p>
+            <p id="pg-total-display" class="font-display font-extrabold text-2xl text-obsidian">Rp 0</p>
+          </div>
+          <input id="pg-customer-name" type="text" value="Nadia Kusuma" placeholder="Nama Pembeli" class="bg-white border border-neutral-300 rounded-xl px-3 py-2 text-xs font-semibold text-obsidian w-full sm:w-52 focus:outline-none focus:border-eracomBlue" />
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <button type="button" onclick="choosePgMethod('QRIS', 'QRIS Instant')" data-pg="QRIS" class="pg-method-card p-3 rounded-2xl border-2 border-obsidian bg-limeVolt/20 text-left transition">
+            <p class="font-display font-extrabold text-xs text-obsidian">QRIS</p>
+            <p class="text-[10px] text-neutral-600 mt-0.5">All E-Wallet &amp; Bank</p>
+          </button>
+          <button type="button" onclick="choosePgMethod('VA_BCA', 'BCA Virtual Account')" data-pg="VA_BCA" class="pg-method-card p-3 rounded-2xl border border-neutral-200 hover:border-obsidian text-left transition">
+            <p class="font-display font-extrabold text-xs text-obsidian">VA BCA</p>
+            <p class="text-[10px] text-neutral-600 mt-0.5">Virtual Account</p>
+          </button>
+          <button type="button" onclick="choosePgMethod('VA_MANDIRI', 'Mandiri Virtual Account')" data-pg="VA_MANDIRI" class="pg-method-card p-3 rounded-2xl border border-neutral-200 hover:border-obsidian text-left transition">
+            <p class="font-display font-extrabold text-xs text-obsidian">VA Mandiri</p>
+            <p class="text-[10px] text-neutral-600 mt-0.5">Virtual Account</p>
+          </button>
+          <button type="button" onclick="choosePgMethod('VA_BNI', 'BNI Virtual Account')" data-pg="VA_BNI" class="pg-method-card p-3 rounded-2xl border border-neutral-200 hover:border-obsidian text-left transition">
+            <p class="font-display font-extrabold text-xs text-obsidian">VA BNI</p>
+            <p class="text-[10px] text-neutral-600 mt-0.5">Virtual Account</p>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" onclick="choosePgMethod('EWALLET', 'GoPay / OVO / DANA')" data-pg="EWALLET" class="pg-method-card p-3 rounded-2xl border border-neutral-200 hover:border-obsidian text-left transition">
+            <p class="font-display font-extrabold text-xs text-obsidian">E-Wallet</p>
+            <p class="text-[10px] text-neutral-600 mt-0.5">GoPay • OVO • DANA • ShopeePay</p>
+          </button>
+          <button type="button" onclick="choosePgMethod('CARD', 'Credit / Debit Card')" data-pg="CARD" class="pg-method-card p-3 rounded-2xl border border-neutral-200 hover:border-obsidian text-left transition">
+            <p class="font-display font-extrabold text-xs text-obsidian">Credit / Debit Card</p>
+            <p class="text-[10px] text-neutral-600 mt-0.5">Visa • Mastercard • JCB</p>
+          </button>
+        </div>
+
+        <button type="button" onclick="showPgInstruction()" class="w-full py-3 rounded-full bg-obsidian hover:bg-neutral-800 text-limeVolt font-display font-extrabold text-xs uppercase tracking-wider transition">
+          Generate Payment Instruction →
+        </button>
+      </div>
+
+      <!-- Step 2: Instruction + Simulate Paid / Failed / Expired -->
+      <div id="pg-view-instruction" class="hidden p-6 space-y-4 text-center">
+        <p id="pg-active-label" class="text-xs font-extrabold uppercase tracking-wider text-eracomBlue">QRIS Instant</p>
+        <div id="pg-dynamic-box" class="bg-canvas border border-neutral-200 rounded-2xl p-5 flex flex-col items-center justify-center min-h-[160px]"></div>
+
+        <div class="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <button type="button" onclick="finishPaymentSimulation('PAID')" class="py-3 px-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-display font-bold text-xs uppercase tracking-wide transition flex items-center justify-center gap-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Bayar Sukses (Paid)</span>
+          </button>
+          <button type="button" onclick="finishPaymentSimulation('FAILED')" class="py-3 px-3 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-display font-bold text-xs uppercase tracking-wide transition flex items-center justify-center gap-1.5">
+            <i data-lucide="x-circle" class="w-4 h-4"></i>
+            <span>Bayar Gagal (Failed)</span>
+          </button>
+          <button type="button" onclick="finishPaymentSimulation('EXPIRED')" class="py-3 px-3 rounded-full bg-amber-600 hover:bg-amber-500 text-white font-display font-bold text-xs uppercase tracking-wide transition flex items-center justify-center gap-1.5">
+            <i data-lucide="clock" class="w-4 h-4"></i>
+            <span>Expired</span>
+          </button>
+        </div>
+        <button type="button" onclick="backToPgMethods()" class="text-xs text-neutral-500 hover:text-obsidian font-semibold">← Ganti Metode</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 5D. INSTANT E-INVOICE MODAL ==================== -->
+  <div id="invoice-modal" class="fixed inset-0 bg-obsidian/75 backdrop-blur-xs z-50 hidden items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-neutral-200 my-auto">
+      <div id="eracom-invoice-print" class="p-6 space-y-4">
+        <!-- Populated via JS -->
+      </div>
+      <div class="px-6 py-4 bg-canvas border-t border-neutral-200 flex items-center justify-between">
+        <button type="button" onclick="window.print()" class="px-4 py-2 rounded-full bg-obsidian text-white text-xs font-bold flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print E-Invoice
+        </button>
+        <button type="button" onclick="closeInvoiceModal()" class="px-5 py-2 rounded-full bg-limeVolt text-obsidian text-xs font-extrabold">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SYSTEM INFO MODAL ==================== -->
+  <div id="system-info-modal" class="fixed inset-0 bg-obsidian/70 backdrop-blur-2xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-obsidian text-white rounded-3xl max-w-md w-full p-6 border border-neutral-800 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="px-2.5 py-0.5 rounded-full bg-limeVolt text-obsidian text-[10px] font-extrabold uppercase">ERACOM Core Telemetry</span>
+        <button type="button" onclick="closeSystemInfoModal()" aria-label="Close System Info" class="text-neutral-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <h3 class="font-display font-bold text-lg">Smart Power &amp; Checkout Engine</h3>
+      <p class="text-xs text-neutral-300 leading-relaxed">
+        Seluruh modul ERACOM berjalan ringan secara lokal dengan simulasi pembayaran instan (QRIS, Virtual Account, E-Wallet, Kartu) dan penerbitan E-Invoice otomatis tanpa perlu login.
+      </p>
+      <div class="bg-charcoal rounded-2xl p-4 border border-neutral-800 flex items-center justify-between">
+        <span class="text-xs text-neutral-400">Output Mode</span>
+        <span class="text-xs font-extrabold text-limeVolt">20W PD • OPTIMIZED</span>
+      </div>
+      <button type="button" onclick="closeSystemInfoModal()" class="w-full py-2.5 rounded-full bg-limeVolt text-obsidian font-display font-extrabold text-xs uppercase">Close</button>
+    </div>
+  </div>
+
+  <!-- Lightweight Toast -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <script>
+    const ERACOM_PRODUCTS = [
+      {
+        id: 'pulse-case-675',
+        name: 'ERACOM Pulse Case 675 mAh',
+        category: 'Power',
+        priceIdr: 689000,
+        priceUsd: 44,
+        badge: 'NEW DROP',
+        spec: '675 mAh • Magnetic Snap',
+        image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=900&q=80',
+        desc: 'Casing baterai ergonomis dengan tampilan waktu/daya kontras tinggi dan koneksi presisi tanpa kabel tambahan.'
+      },
+      {
+        id: 'volt-dock-20w',
+        name: 'ERACOM Volt Desk Station 20W',
+        category: 'Audio & Tech',
+        priceIdr: 549000,
+        priceUsd: 35,
+        badge: 'BESTSELLER',
+        spec: '20W Fast Charge • CNC Alloy',
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80',
+        desc: 'Dudukan pengisian daya meja bergaya minimalis dengan pemberat aluminium presisi dan indikator LED halus.'
+      },
+      {
+        id: 'alpine-strap-pro',
+        name: 'ERACOM Alpine Woven Strap',
+        category: 'Accessories',
+        priceIdr: 299000,
+        priceUsd: 19,
+        badge: 'EDITION',
+        spec: 'High-Tensile Weave • Quick Lock',
+        image: 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=900&q=80',
+        desc: 'Strap anyaman bertekstur lembut dengan pengait logam tahan korosi untuk penggunaan harian intensif.'
+      },
+      {
+        id: 'chrono-glass-pro',
+        name: 'ERACOM Chrono Matte Shield',
+        category: 'Accessories',
+        priceIdr: 189000,
+        priceUsd: 12,
+        badge: 'ESSENTIAL',
+        spec: 'Anti-Glare Matte • 9H Shield',
+        image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=900&q=80',
+        desc: 'Pelindung layar dan bodi anti-silau dengan respon sentuh presisi dan lapisan tahan minyak.'
+      }
+    ];
+
+    const PROMO_CODES = {
+      ERACOM10: { rate: 0.1, label: 'Diskon Promo ERACOM10 (10%)' },
+      VIP25: { rate: 0.25, label: 'Diskon Promo VIP25 (25%)' }
+    };
+
+    const SHIPPING_RATES = {
+      regular: { idr: 18000, usd: 3, label: 'Reguler' },
+      express: { idr: 35000, usd: 6, label: 'Express' },
+      instant: { idr: 55000, usd: 9, label: 'Instan' }
+    };
+
+    const state = {
+      lang: 'id',
+      currency: 'IDR',
+      category: 'All',
+      showcaseId: 'pulse-case-675',
+      cart: [],
+      shippingTier: 'regular',
+      promoCode: null,
+      promoDiscountRate: 0,
+      pgMethod: 'QRIS',
+      pgLabel: 'QRIS Instant',
+      lastOrder: null
+    };
+
+    let currentShowcaseProduct = ERACOM_PRODUCTS[0];
+
+    function formatPrice(product) {
+      if (state.currency === 'USD') {
+        return '$' + product.priceUsd.toLocaleString('en-US');
+      }
+      return 'Rp ' + product.priceIdr.toLocaleString('id-ID');
+    }
+
+    function formatAmount(idrVal, usdVal) {
+      if (state.currency === 'USD') {
+        return '$' + usdVal.toLocaleString('en-US');
+      }
+      return 'Rp ' + idrVal.toLocaleString('id-ID');
+    }
+
+    function getProduct(id) {
+      return ERACOM_PRODUCTS.find((p) => p.id === id) || ERACOM_PRODUCTS[0];
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toast-box');
+      const el = document.createElement('div');
+      el.className = 'bg-obsidian text-white border border-neutral-700 px-4 py-2.5 rounded-full text-xs font-semibold shadow-lg transition-all duration-200';
+      el.innerHTML = `<span class="text-limeVolt mr-1.5">●</span>${msg}`;
+      box.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 200);
+      }, 2400);
+    }
+
+    function setLanguage(lang) {
+      state.lang = lang;
+      const btnId = document.getElementById('lang-btn-id');
+      const btnEn = document.getElementById('lang-btn-en');
+
+      if (lang === 'id') {
+        btnId.className = 'px-2.5 py-1 rounded-full bg-limeVolt text-obsidian transition-colors';
+        btnEn.className = 'px-2.5 py-1 rounded-full text-neutral-300 hover:text-white transition-colors';
+        document.getElementById('hero-headline-main').textContent = 'EXTEND YOUR';
+        document.getElementById('hero-headline-sub').textContent = 'PRODUCTIVITY';
+        document.getElementById('hero-desc').innerHTML =
+          'Modul daya presisi, casing pelindung pintar, dan aksesoris ergonomis rancangan <strong>ERACOM</strong> yang menyatu mulus dengan ritme kerja dan gaya hidup modern Anda.';
+        document.querySelector('[data-i18n="heroBadge"]').textContent = 'ERACOM FLAGSHIP • EDITION 2026';
+        document.querySelector('[data-i18n="heroCta"]').textContent = 'Gets Started';
+        document.querySelector('[data-i18n="heroReviews"]').textContent = '2,480+ Pengguna Terverifikasi';
+        document.querySelector('[data-i18n="addToBag"]').textContent = 'Add to Bag';
+      } else {
+        btnEn.className = 'px-2.5 py-1 rounded-full bg-limeVolt text-obsidian transition-colors';
+        btnId.className = 'px-2.5 py-1 rounded-full text-neutral-300 hover:text-white transition-colors';
+        document.getElementById('hero-headline-main').textContent = 'EXTEND YOUR';
+        document.getElementById('hero-headline-sub').textContent = 'LUXURY CRAFT';
+        document.getElementById('hero-desc').innerHTML =
+          'Precision power modules, smart protective shells, and tactile accessories crafted by <strong>ERACOM</strong> to elevate every moment of your daily workflow.';
+        document.querySelector('[data-i18n="heroBadge"]').textContent = 'ERACOM FLAGSHIP • EDITION 2026';
+        document.querySelector('[data-i18n="heroCta"]').textContent = 'Gets Started';
+        document.querySelector('[data-i18n="heroReviews"]').textContent = '2,480+ Verified ERACOM Users';
+        document.querySelector('[data-i18n="addToBag"]').textContent = 'Add to Bag';
+      }
+    }
+
+    function toggleCurrency() {
+      state.currency = state.currency === 'IDR' ? 'USD' : 'IDR';
+      document.getElementById('currency-toggle-btn').textContent = state.currency === 'IDR' ? 'IDR (Rp)' : 'USD ($)';
+      renderShowcaseStage();
+      renderCatalog();
+      renderCart();
+    }
+
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu-panel').classList.toggle('hidden');
+    }
+
+    function openSystemInfoModal() {
+      const m = document.getElementById('system-info-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeSystemInfoModal() {
+      const m = document.getElementById('system-info-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function selectShowcaseProduct(id) {
+      state.showcaseId = id;
+      currentShowcaseProduct = getProduct(id);
+      renderShowcaseStage();
+    }
+
+    function renderShowcaseStage() {
+      const p = currentShowcaseProduct;
+      document.getElementById('showcase-title').textContent = p.name;
+      document.getElementById('showcase-price').textContent = formatPrice(p);
+      const img = document.getElementById('showcase-img');
+      img.src = p.image;
+      img.alt = p.name;
+
+      const pillsContainer = document.getElementById('showcase-switcher-pills');
+      pillsContainer.innerHTML = ERACOM_PRODUCTS.slice(0, 3)
+        .map((item) => {
+          const active = item.id === p.id;
+          const shortName = item.name.replace('ERACOM ', '').split(' ').slice(0, 2).join(' ');
+          return `
+            <button type="button" onclick="selectShowcaseProduct('${item.id}')" class="px-3 py-1.5 rounded-full text-[11px] font-bold transition whitespace-nowrap ${
+              active ? 'bg-obsidian text-limeVolt' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+            }">
+              ${shortName}
+            </button>
+          `;
+        })
+        .join('');
+    }
+
+    function switchFeatureTab(tab) {
+      const editionsPanel = document.getElementById('tab-panel-editions');
+      const carePanel = document.getElementById('tab-panel-care');
+      const btnEditions = document.getElementById('tab-btn-editions');
+      const btnCare = document.getElementById('tab-btn-care');
+
+      if (tab === 'editions') {
+        editionsPanel.classList.remove('hidden');
+        carePanel.classList.add('hidden');
+        btnEditions.className = 'px-4 py-2 rounded-full text-xs font-bold bg-obsidian text-limeVolt transition-all';
+        btnCare.className = 'px-4 py-2 rounded-full text-xs font-bold text-neutral-600 hover:text-obsidian transition-all';
+      } else {
+        carePanel.classList.remove('hidden');
+        editionsPanel.classList.add('hidden');
+        btnCare.className = 'px-4 py-2 rounded-full text-xs font-bold bg-obsidian text-limeVolt transition-all';
+        btnEditions.className = 'px-4 py-2 rounded-full text-xs font-bold text-neutral-600 hover:text-obsidian transition-all';
+      }
+    }
+
+    function renderCategoryPills() {
+      const categories = ['All', 'Power', 'Audio & Tech', 'Accessories'];
+      const container = document.getElementById('catalog-category-pills');
+      container.innerHTML = categories
+        .map((cat) => {
+          const active = state.category === cat;
+          return `
+            <button type="button" onclick="setCategory('${cat}')" class="px-3.5 py-2 rounded-full text-xs font-bold transition ${
+              active ? 'bg-obsidian text-limeVolt' : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'
+            }">
+              ${cat}
+            </button>
+          `;
+        })
+        .join('');
+    }
+
+    function setCategory(cat) {
+      state.category = cat;
+      renderCategoryPills();
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      const items =
+        state.category === 'All'
+          ? ERACOM_PRODUCTS
+          : ERACOM_PRODUCTS.filter((p) => p.category === state.category);
+
+      grid.innerHTML = items
+        .map((p) => `
+          <article class="bg-white rounded-3xl border border-neutral-200/90 p-4 flex flex-col justify-between hover:border-obsidian hover:shadow-lg transition-all group">
+            <div>
+              <div onclick="openQuickProductModal('${p.id}')" class="cursor-pointer relative h-52 rounded-2xl bg-neutral-100 overflow-hidden mb-4">
+                <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/600x500/111111/D9FF00?text=ERACOM'" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-obsidian text-limeVolt text-[10px] font-extrabold uppercase tracking-wider">
+                  ${p.badge}
+                </span>
+              </div>
+              <p class="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider">${p.spec}</p>
+              <h3 onclick="openQuickProductModal('${p.id}')" class="cursor-pointer font-display font-bold text-base text-obsidian mt-1 hover:text-eracomBlue transition-colors">
+                ${p.name}
+              </h3>
+              <p class="text-xs text-neutral-600 mt-1 line-clamp-2">${p.desc}</p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
+              <span class="font-display font-extrabold text-base text-obsidian">${formatPrice(p)}</span>
+              <button type="button" onclick="addProductToCart('${p.id}', 1)" class="px-3.5 py-2 rounded-full bg-obsidian hover:bg-limeVolt hover:text-obsidian text-white text-xs font-bold transition-colors flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Bag</span>
+              </button>
+            </div>
+          </article>
+        `)
+        .join('');
+
+      lucide.createIcons();
+    }
+
+    function openQuickProductModal(id) {
+      const p = getProduct(id);
+      const body = document.getElementById('product-detail-body');
+      body.innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="px-2.5 py-0.5 rounded-full bg-limeVolt text-obsidian text-[10px] font-extrabold uppercase">${p.badge}</span>
+            <h3 class="font-display font-extrabold text-xl text-obsidian mt-2">${p.name}</h3>
+            <p class="text-xs text-neutral-500 mt-0.5">${p.spec}</p>
+          </div>
+          <button type="button" onclick="closeQuickProductModal()" aria-label="Close Detail" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-700">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <div class="h-56 rounded-2xl overflow-hidden bg-neutral-100">
+          <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover" />
+        </div>
+        <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed">${p.desc}</p>
+        <div class="pt-3 border-t border-neutral-100 flex items-center justify-between gap-4">
+          <div>
+            <p class="text-[11px] text-neutral-400">Official Price</p>
+            <p class="font-display font-extrabold text-xl text-obsidian">${formatPrice(p)}</p>
+          </div>
+          <button type="button" onclick="addProductToCart('${p.id}', 1); closeQuickProductModal(); toggleCartDrawer(true);" class="px-5 py-3 rounded-full bg-obsidian hover:bg-limeVolt hover:text-obsidian text-limeVolt font-display font-extrabold text-xs uppercase tracking-wider transition-colors">
+            Add to Bag
+          </button>
+        </div>
+      `;
+      const m = document.getElementById('product-detail-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeQuickProductModal() {
+      const m = document.getElementById('product-detail-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function toggleCartDrawer(open) {
+      const backdrop = document.getElementById('cart-backdrop');
+      const drawer = document.getElementById('cart-drawer');
+      if (open) {
+        renderCart();
+        backdrop.classList.remove('hidden');
+        drawer.classList.remove('translate-x-full');
+      } else {
+        backdrop.classList.add('hidden');
+        drawer.classList.add('translate-x-full');
+      }
+    }
+
+    function addProductToCart(productId, delta = 1) {
+      const prod = getProduct(productId);
+      const found = state.cart.find((item) => item.productId === productId);
+      if (found) {
+        found.qty = Math.max(0, found.qty + delta);
+        if (found.qty === 0) {
+          state.cart = state.cart.filter((i) => i.productId !== productId);
+        }
+      } else if (delta > 0) {
+        state.cart.push({ productId, qty: delta });
+      }
+      updateCartBadge();
+      renderCart();
+      if (delta > 0) showToast(`${prod.name} ditambahkan ke Bag`);
+    }
+
+    function removeCartItem(productId) {
+      const prod = getProduct(productId);
+      state.cart = state.cart.filter((i) => i.productId !== productId);
+      updateCartBadge();
+      renderCart();
+      showToast(`${prod.name} dihapus dari Bag`);
+    }
+
+    function setShippingTier(tier) {
+      if (!SHIPPING_RATES[tier]) return;
+      state.shippingTier = tier;
+      renderCart();
+    }
+
+    function applyPromoCode() {
+      const inputEl = document.getElementById('promo-code-input');
+      const feedbackEl = document.getElementById('promo-feedback');
+      const clearBtn = document.getElementById('clear-promo-btn');
+      const code = inputEl.value.trim().toUpperCase();
+
+      if (PROMO_CODES[code]) {
+        state.promoCode = code;
+        state.promoDiscountRate = PROMO_CODES[code].rate;
+        feedbackEl.className = 'text-[11px] font-semibold text-emerald-700';
+        feedbackEl.textContent = `✓ ${PROMO_CODES[code].label} aktif`;
+        clearBtn.classList.remove('hidden');
+        showToast(`Kode promo ${code} diterapkan`);
+      } else {
+        state.promoCode = null;
+        state.promoDiscountRate = 0;
+        feedbackEl.className = 'text-[11px] font-semibold text-rose-600';
+        feedbackEl.textContent = 'Kode tidak valid. Gunakan ERACOM10 atau VIP25.';
+        clearBtn.classList.add('hidden');
+        showToast('Kode promo tidak valid');
+      }
+      renderCart();
+    }
+
+    function clearPromoCode() {
+      state.promoCode = null;
+      state.promoDiscountRate = 0;
+      document.getElementById('promo-code-input').value = '';
+      document.getElementById('clear-promo-btn').classList.add('hidden');
+      const feedbackEl = document.getElementById('promo-feedback');
+      feedbackEl.className = 'text-[11px] font-medium text-neutral-500';
+      feedbackEl.textContent = 'Promo: ERACOM10 (10%) • VIP25 (25%)';
+      renderCart();
+      showToast('Kode promo dilepas');
+    }
+
+    function updateCartBadge() {
+      const totalQty = state.cart.reduce((acc, i) => acc + i.qty, 0);
+      document.getElementById('cart-badge').textContent = totalQty;
+    }
+
+    function getCartTotals() {
+      let subtotalIdr = 0;
+      let subtotalUsd = 0;
+      let totalItems = 0;
+
+      state.cart.forEach((item) => {
+        const p = getProduct(item.productId);
+        subtotalIdr += p.priceIdr * item.qty;
+        subtotalUsd += p.priceUsd * item.qty;
+        totalItems += item.qty;
+      });
+
+      const hasBundleDiscount = totalItems >= 2;
+      const bundleDiscountIdr = hasBundleDiscount ? Math.round(subtotalIdr * 0.05) : 0;
+      const bundleDiscountUsd = hasBundleDiscount ? Math.round(subtotalUsd * 0.05) : 0;
+
+      const afterBundleIdr = Math.max(0, subtotalIdr - bundleDiscountIdr);
+      const afterBundleUsd = Math.max(0, subtotalUsd - bundleDiscountUsd);
+
+      const promoDiscountIdr = Math.round(afterBundleIdr * state.promoDiscountRate);
+      const promoDiscountUsd = Math.round(afterBundleUsd * state.promoDiscountRate);
+
+      const totalDiscountIdr = bundleDiscountIdr + promoDiscountIdr;
+      const totalDiscountUsd = bundleDiscountUsd + promoDiscountUsd;
+
+      const shipRate = SHIPPING_RATES[state.shippingTier] || SHIPPING_RATES.regular;
+      const shippingIdr = totalItems > 0 ? shipRate.idr : 0;
+      const shippingUsd = totalItems > 0 ? shipRate.usd : 0;
+
+      const totalBayarIdr = Math.max(0, subtotalIdr + shippingIdr - totalDiscountIdr);
+      const totalBayarUsd = Math.max(0, subtotalUsd + shippingUsd - totalDiscountUsd);
+
+      return {
+        totalItems,
+        subtotalIdr,
+        subtotalUsd,
+        shippingIdr,
+        shippingUsd,
+        shippingLabel: shipRate.label,
+        hasBundleDiscount,
+        bundleDiscountIdr,
+        bundleDiscountUsd,
+        promoDiscountIdr,
+        promoDiscountUsd,
+        totalDiscountIdr,
+        totalDiscountUsd,
+        totalBayarIdr,
+        totalBayarUsd
+      };
+    }
+
+    function renderCart() {
+      const list = document.getElementById('cart-items-list');
+      const checkoutBtn = document.getElementById('checkout-open-btn');
+      const totals = getCartTotals();
+
+      if (state.cart.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-16">
+            <p class="font-display font-bold text-sm text-neutral-700">Your ERACOM Bag is empty</p>
+            <p class="text-xs text-neutral-500 mt-1">Pilih produk dari showcase atau katalog untuk mulai checkout.</p>
+          </div>
+        `;
+        checkoutBtn.disabled = true;
+      } else {
+        checkoutBtn.disabled = false;
+        list.innerHTML = state.cart
+          .map((item) => {
+            const p = getProduct(item.productId);
+            return `
+              <div class="bg-white rounded-2xl border border-neutral-200 p-3 flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-3 min-w-0">
+                  <img src="${p.image}" alt="${p.name}" class="w-14 h-14 rounded-xl object-cover bg-neutral-100 shrink-0" />
+                  <div class="min-w-0">
+                    <p class="text-xs font-bold text-obsidian truncate">${p.name}</p>
+                    <p class="text-xs font-extrabold text-eracomBlue mt-0.5">${formatAmount(p.priceIdr * item.qty, p.priceUsd * item.qty)}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <div class="flex items-center gap-1 bg-neutral-100 rounded-full px-1.5 py-1">
+                    <button type="button" onclick="addProductToCart('${p.id}', -1)" class="w-5 h-5 rounded-full bg-white text-obsidian text-xs font-bold">-</button>
+                    <span class="text-xs font-extrabold w-4 text-center">${item.qty}</span>
+                    <button type="button" onclick="addProductToCart('${p.id}', 1)" class="w-5 h-5 rounded-full bg-white text-obsidian text-xs font-bold">+</button>
+                  </div>
+                  <button type="button" onclick="removeCartItem('${p.id}')" title="Hapus item" aria-label="Hapus item" class="w-7 h-7 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      document.getElementById('cart-subtotal-display').textContent = formatAmount(totals.subtotalIdr, totals.subtotalUsd);
+      document.getElementById('cart-shipping-display').textContent = formatAmount(totals.shippingIdr, totals.shippingUsd);
+
+      const bundleRow = document.getElementById('cart-bundle-discount-row');
+      if (totals.hasBundleDiscount && totals.bundleDiscountIdr > 0) {
+        bundleRow.classList.remove('hidden');
+        bundleRow.classList.add('flex');
+        document.getElementById('cart-bundle-discount-display').textContent = `-${formatAmount(totals.bundleDiscountIdr, totals.bundleDiscountUsd)}`;
+      } else {
+        bundleRow.classList.add('hidden');
+        bundleRow.classList.remove('flex');
+      }
+
+      const promoRow = document.getElementById('cart-promo-discount-row');
+      if (state.promoCode && totals.promoDiscountIdr > 0) {
+        promoRow.classList.remove('hidden');
+        promoRow.classList.add('flex');
+        document.getElementById('cart-promo-label').textContent = `Diskon Promo (${state.promoCode})`;
+        document.getElementById('cart-promo-discount-display').textContent = `-${formatAmount(totals.promoDiscountIdr, totals.promoDiscountUsd)}`;
+      } else {
+        promoRow.classList.add('hidden');
+        promoRow.classList.remove('flex');
+      }
+
+      document.getElementById('cart-total-bayar-display').textContent = formatAmount(totals.totalBayarIdr, totals.totalBayarUsd);
+      lucide.createIcons();
+    }
+
+    function openPaymentModal() {
+      if (state.cart.length === 0) return;
+      toggleCartDrawer(false);
+
+      const totals = getCartTotals();
+      const refCode = 'ERC-' + Math.floor(100000 + Math.random() * 900000);
+      state.lastOrder = {
+        ref: refCode,
+        items: state.cart.map((i) => ({ ...i, product: getProduct(i.productId) })),
+        totals,
+        promoCode: state.promoCode,
+        method: state.pgMethod,
+        methodLabel: state.pgLabel,
+        status: 'PENDING',
+        createdAt: new Date().toLocaleString('id-ID')
+      };
+
+      document.getElementById('pg-order-ref').textContent = `REF: #${refCode}`;
+      document.getElementById('pg-total-display').textContent = formatAmount(totals.totalBayarIdr, totals.totalBayarUsd);
+      document.getElementById('pg-view-methods').classList.remove('hidden');
+      document.getElementById('pg-view-instruction').classList.add('hidden');
+
+      const m = document.getElementById('payment-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closePaymentModal() {
+      const m = document.getElementById('payment-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function choosePgMethod(code, label) {
+      state.pgMethod = code;
+      state.pgLabel = label;
+      document.querySelectorAll('.pg-method-card').forEach((card) => {
+        if (card.dataset.pg === code) {
+          card.className = 'pg-method-card p-3 rounded-2xl border-2 border-obsidian bg-limeVolt/20 text-left transition';
+        } else {
+          card.className = 'pg-method-card p-3 rounded-2xl border border-neutral-200 hover:border-obsidian text-left transition';
+        }
+      });
+    }
+
+    function showPgInstruction() {
+      if (!state.lastOrder) return;
+      state.lastOrder.customer = document.getElementById('pg-customer-name').value.trim() || 'ERACOM Buyer';
+      state.lastOrder.method = state.pgMethod;
+      state.lastOrder.methodLabel = state.pgLabel;
+
+      document.getElementById('pg-view-methods').classList.add('hidden');
+      document.getElementById('pg-view-instruction').classList.remove('hidden');
+      document.getElementById('pg-active-label').textContent = state.pgLabel;
+
+      const box = document.getElementById('pg-dynamic-box');
+      const payAmountIdr = state.lastOrder.totals.totalBayarIdr;
+
+      if (state.pgMethod === 'QRIS') {
+        box.innerHTML = `<div id="eracom-qr-code" class="bg-white p-2 rounded-xl border border-neutral-200"></div><p class="text-[11px] font-mono text-neutral-500 mt-2">NMID: ID102026ERACOM01 • ${formatAmount(payAmountIdr, state.lastOrder.totals.totalBayarUsd)}</p>`;
+        setTimeout(() => {
+          const target = document.getElementById('eracom-qr-code');
+          if (target && typeof QRCode !== 'undefined') {
+            new QRCode(target, {
+              text: `ERACOM-PAY|${state.lastOrder.ref}|${payAmountIdr}`,
+              width: 128,
+              height: 128,
+              colorDark: '#111111',
+              colorLight: '#ffffff'
+            });
+          }
+        }, 40);
+      } else if (state.pgMethod.startsWith('VA_')) {
+        const vaBank = state.pgMethod.replace('VA_', '');
+        const vaPrefixes = { BCA: '88019', MANDIRI: '89019', BNI: '82419' };
+        const vaCode = `${vaPrefixes[vaBank] || '88019'} 0812 7741 00`;
+        box.innerHTML = `<p class="text-[11px] text-neutral-500">${vaBank} Virtual Account Number</p><p class="font-mono font-extrabold text-xl text-obsidian mt-1 tracking-wider">${vaCode}</p>`;
+      } else if (state.pgMethod === 'EWALLET') {
+        box.innerHTML = `<p class="text-xs font-bold text-obsidian">Push Notification Sent</p><p class="text-[11px] text-neutral-500 mt-1">Konfirmasi pembayaran pada aplikasi GoPay, OVO, DANA, atau ShopeePay Anda.</p>`;
+      } else {
+        box.innerHTML = `<p class="text-xs font-bold text-obsidian">3D Secure Card Authorization</p><p class="text-[11px] font-mono text-neutral-500 mt-1">•••• •••• •••• 4242 • EXP 11/29</p>`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function backToPgMethods() {
+      document.getElementById('pg-view-instruction').classList.add('hidden');
+      document.getElementById('pg-view-methods').classList.remove('hidden');
+    }
+
+    function finishPaymentSimulation(outcome) {
+      if (!state.lastOrder) return;
+      state.lastOrder.status = outcome;
+      closePaymentModal();
+
+      if (outcome === 'PAID') {
+        state.cart = [];
+        state.promoCode = null;
+        state.promoDiscountRate = 0;
+        document.getElementById('promo-code-input').value = '';
+        document.getElementById('clear-promo-btn').classList.add('hidden');
+        const feedbackEl = document.getElementById('promo-feedback');
+        feedbackEl.className = 'text-[11px] font-medium text-neutral-500';
+        feedbackEl.textContent = 'Promo: ERACOM10 (10%) • VIP25 (25%)';
+        updateCartBadge();
+        renderCart();
+        showToast('Pembayaran Berhasil (PAID)! E-Invoice siap.');
+        openInvoiceModal(state.lastOrder);
+      } else if (outcome === 'EXPIRED') {
+        showToast('Waktu pembayaran habis (Expired). Silakan ulangi checkout.');
+        openInvoiceModal(state.lastOrder);
+      } else {
+        showToast('Pembayaran gagal (Failed). Silakan coba metode lain.');
+        openInvoiceModal(state.lastOrder);
+      }
+    }
+
+    function openInvoiceModal(order) {
+      const t = order.totals;
+      const badgeClass =
+        order.status === 'PAID'
+          ? 'bg-emerald-100 text-emerald-700'
+          : order.status === 'EXPIRED'
+          ? 'bg-amber-100 text-amber-800'
+          : 'bg-rose-100 text-rose-700';
+
+      const printArea = document.getElementById('eracom-invoice-print');
+      printArea.innerHTML = `
+        <div class="flex items-center justify-between pb-3 border-b border-neutral-200">
+          <div>
+            <p class="font-display font-extrabold text-lg text-obsidian">ERACOM E-INVOICE</p>
+            <p class="text-[11px] font-mono text-neutral-500">#${order.ref} • ${order.createdAt}</p>
+          </div>
+          <span class="px-3 py-1 rounded-full ${badgeClass} text-xs font-extrabold">${order.status}</span>
+        </div>
+        <div class="text-xs flex flex-wrap justify-between gap-2 text-neutral-600">
+          <span>Customer: <strong class="text-obsidian">${order.customer}</strong></span>
+          <span>Channel: <strong class="text-obsidian">${order.methodLabel}</strong></span>
+        </div>
+        <div class="divide-y divide-neutral-100 border border-neutral-200 rounded-2xl px-4 text-xs">
+          ${order.items
+            .map(
+              (i) => `
+            <div class="py-2.5 flex items-center justify-between">
+              <span class="font-semibold text-obsidian">${i.product.name} ×${i.qty}</span>
+              <span class="font-bold">${formatAmount(i.product.priceIdr * i.qty, i.product.priceUsd * i.qty)}</span>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+        <div class="bg-canvas border border-neutral-200 rounded-2xl p-3.5 space-y-1 text-xs">
+          <div class="flex justify-between text-neutral-600">
+            <span>Subtotal</span>
+            <span class="font-semibold text-obsidian">${formatAmount(t.subtotalIdr, t.subtotalUsd)}</span>
+          </div>
+          <div class="flex justify-between text-neutral-600">
+            <span>Ongkir (${t.shippingLabel})</span>
+            <span class="font-semibold text-obsidian">${formatAmount(t.shippingIdr, t.shippingUsd)}</span>
+          </div>
+          ${
+            t.bundleDiscountIdr > 0
+              ? `<div class="flex justify-between text-emerald-700 font-semibold"><span>Diskon Bundle (≥2 item)</span><span>-${formatAmount(t.bundleDiscountIdr, t.bundleDiscountUsd)}</span></div>`
+              : ''
+          }
+          ${
+            t.promoDiscountIdr > 0
+              ? `<div class="flex justify-between text-eracomBlue font-semibold"><span>Diskon Promo (${order.promoCode})</span><span>-${formatAmount(t.promoDiscountIdr, t.promoDiscountUsd)}</span></div>`
+              : ''
+          }
+          <div class="pt-2 border-t border-neutral-200 flex items-center justify-between">
+            <span class="font-bold text-obsidian uppercase">Total Bayar</span>
+            <span class="font-display font-extrabold text-lg text-obsidian">${formatAmount(t.totalBayarIdr, t.totalBayarUsd)}</span>
+          </div>
+        </div>
+      `;
+      const m = document.getElementById('invoice-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeInvoiceModal() {
+      const m = document.getElementById('invoice-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderShowcaseStage();
+      renderCategoryPills();
+      renderCatalog();
+      updateCartBadge();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
